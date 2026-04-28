@@ -16,6 +16,8 @@ const ResultGrid = () => {
 
   useEffect(
     function () {
+
+      if(!query) return
       const getData = async () => {
 
         try {
@@ -46,7 +48,7 @@ const ResultGrid = () => {
           console.log(data);
           dispatch(setResults(data));
         } catch (err) {
-          dispatch(setError(err));
+          dispatch(setError(err.message));
         }
       };
       getData();
