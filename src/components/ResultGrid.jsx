@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { getPhotos, getVideos } from "../api/mediaApi.js";
 import {
-  setQuery,
+  // setQuery,
   setError,
   setLoading,
   setResults,
 } from "../redux/features/searchSlice.js";
 import { useEffect } from "react";
+import ResultCard from "./ResultCard.jsx";
 
 const ResultGrid = () => {
   const dispatch = useDispatch();
@@ -16,10 +17,8 @@ const ResultGrid = () => {
 
   useEffect(
     function () {
-
-      if(!query) return
+      if (!query) return;
       const getData = async () => {
-
         try {
           dispatch(setLoading());
           let data = [];
@@ -32,6 +31,7 @@ const ResultGrid = () => {
               title: item.alt_description,
               thumbnail: item.urls.small,
               src: item.urls.full,
+              url: item.links.html,
             }));
           }
           if (activeTab == "videos") {
@@ -42,6 +42,7 @@ const ResultGrid = () => {
               title: item.user.name || "video",
               thumbnail: item.image,
               src: item.video_files[0].link,
+              url: item.url,
             }));
           }
 
@@ -53,16 +54,20 @@ const ResultGrid = () => {
       };
       getData();
     },
-    [query, activeTab],
+    [query, activeTab, dispatch],
   );
 
-  if(error) return <h1>Error</h1>
-  if(loading) return <h1>Loading</h1>
+  if (error) return <h1>Error</h1>;
+  if (loading) return <h1>Loading</h1>;
 
   return (
-    <div className="p-10">
-      {results.map((items,idx)=>{
-        return <h1>{items.title}</h1>
+    <div className="flex justify-between w-full flex-wrap gap-[.8rem] overflow-auto px-7">
+      {results.map((item, idx) => {
+        return (
+          <div key={idx}>
+            <ResultCard item={item} />
+          </div>
+        );
       })}
     </div>
   );
